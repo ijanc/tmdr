@@ -171,7 +171,14 @@ fn inline_text(nodes: &[Node]) -> String {
             Node::InlineCode(c) => out.push_str(&c.value),
             Node::Break(_) => out.push('\n'),
             Node::Link(l) => {
-                out.push_str(&inline_text(&l.children));
+                let text = inline_text(&l.children);
+                out.push_str("\x1b]8;;");
+                out.push_str(&l.url);
+                out.push_str("\x1b\\");
+                out.push_str(UL);
+                out.push_str(&text);
+                out.push_str(RESET);
+                out.push_str("\x1b]8;;\x1b\\");
             }
             Node::Image(img) => out.push_str(&img.alt),
             _ => {}

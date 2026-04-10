@@ -43,6 +43,11 @@ main(void)
 }
 ```
 
+## Links
+
+Visit [OpenBSD](https://www.openbsd.org) for more info.
+A [link with **bold**](https://example.com) inside a paragraph.
+
 ## Headers
 
 ### Level 3

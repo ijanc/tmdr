@@ -1,0 +1,68 @@
+.\"
+.\" Copyright (c) 2025-2026 Murilo Ijanc' <murilo@ijanc.org>
+.\"
+.\" Permission to use, copy, modify, and/or distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\"
+.Dd $Mdocdate: April 10 2026 $
+.Dt TMDR 1
+.Os
+.Sh NAME
+.Nm tmdr
+.Nd tiny markdown terminal reader
+.Sh SYNOPSIS
+.Nm tmdr
+.Op Fl V
+.Op Fl w Ar cols
+.Op Ar file
+.Sh DESCRIPTION
+.Nm
+reads a Markdown file and renders it for the terminal.
+If no
+.Ar file
+is given, standard input is read.
+.Pp
+Supported elements: headings, paragraphs, lists, code blocks,
+bold, italic, and inline code.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl V
+Print the version and exit.
+.It Fl w Ar cols
+Set the output width in columns.
+The default is 80.
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width "TMDR_LOG"
+.It Ev TMDR_LOG
+When set, enable logging to standard error with UTC timestamps.
+.El
+.Sh EXIT STATUS
+.Ex -std tmdr
+.Sh EXAMPLES
+Render a file:
+.Bd -literal -offset indent
+$ tmdr README.md
+.Ed
+.Pp
+Pipe from standard input:
+.Bd -literal -offset indent
+$ curl -s https://example.com/file.md | tmdr
+.Ed
+.Pp
+Set column width to 60:
+.Bd -literal -offset indent
+$ tmdr -w 60 README.md
+.Ed
+.Sh AUTHORS
+.An Murilo Ijanc' Aq Mt murilo@ijanc.org

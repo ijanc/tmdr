@@ -2,7 +2,8 @@ tmdr - Tiny Markdown Reader
 ==================================
 tmdr is a tiny markdown terminal reader written in Rust.
 It renders headings, paragraphs, lists, code blocks, bold,
-italic, inline code, and links (OSC 8) directly in the terminal.
+italic, inline code, links (OSC 8), and GFM tables directly
+in the terminal.
 
 ![tmdr screenshot](tmdr.png)
 

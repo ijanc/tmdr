@@ -48,6 +48,14 @@ main(void)
 Visit [OpenBSD](https://www.openbsd.org) for more info.
 A [link with **bold**](https://example.com) inside a paragraph.
 
+## Tables
+
+| Left   | Center | Right |
+|:-------|:------:|------:|
+| a      | b      | c     |
+| longer | mid    | 42    |
+| `code` | **bo** | *it*  |
+
 ## Headers
 
 ### Level 3

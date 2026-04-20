@@ -20,14 +20,18 @@ use std::{
     io::{self, Read, Write},
 };
 
-use markdown::{ParseOptions, mdast::Node, to_mdast};
+use markdown::{
+    ParseOptions,
+    mdast::{AlignKind, Node, Table},
+    to_mdast,
+};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     let (cols, file) = parse_args(&args);
 
     let input = read_input(file);
-    let tree = match to_mdast(&input, &ParseOptions::default()) {
+    let tree = match to_mdast(&input, &ParseOptions::gfm()) {
         Ok(t) => t,
         Err(e) => {
             eprintln!("tmdr: {}", e);
@@ -149,7 +153,72 @@ fn render_block(w: &mut impl Write, node: &Node, cols: usize) {
                 render_block(w, child, cols.saturating_sub(2));
             }
         }
+        Node::Table(t) => render_table(w, t),
         _ => {}
+    }
+}
+
+fn render_table(w: &mut impl Write, table: &Table) {
+    let mut rows: Vec<Vec<String>> = Vec::new();
+    for child in &table.children {
+        if let Node::TableRow(r) = child {
+            let mut row = Vec::new();
+            for cell in &r.children {
+                if let Node::TableCell(c) = cell {
+                    row.push(inline_text(&c.children));
+                }
+            }
+            rows.push(row);
+        }
+    }
+    if rows.is_empty() {
+        return;
+    }
+
+    let ncols = rows.iter().map(|r| r.len()).max().unwrap_or(0);
+    let mut widths = vec![0usize; ncols];
+    for row in &rows {
+        for (i, cell) in row.iter().enumerate() {
+            widths[i] = widths[i].max(visible_len(cell));
+        }
+    }
+
+    for (ri, row) in rows.iter().enumerate() {
+        let _ = write!(w, "\u{2502}");
+        for (ci, width) in widths.iter().enumerate() {
+            let empty = String::new();
+            let cell = row.get(ci).unwrap_or(&empty);
+            let align = table.align.get(ci).copied().unwrap_or(AlignKind::None);
+            let vlen = visible_len(cell);
+            let extra = width.saturating_sub(vlen);
+            let (lp, rp) = match align {
+                AlignKind::Right => (extra, 0),
+                AlignKind::Center => (extra / 2, extra - extra / 2),
+                _ => (0, extra),
+            };
+            let _ = write!(
+                w,
+                " {}{}{} \u{2502}",
+                " ".repeat(lp),
+                cell,
+                " ".repeat(rp)
+            );
+        }
+        let _ = writeln!(w);
+
+        if ri == 0 {
+            let _ = write!(w, "\u{251c}");
+            for (ci, width) in widths.iter().enumerate() {
+                let _ = write!(w, "{}", "\u{2500}".repeat(width + 2));
+                let joint = if ci + 1 < widths.len() {
+                    '\u{253c}'
+                } else {
+                    '\u{2524}'
+                };
+                let _ = write!(w, "{}", joint);
+            }
+            let _ = writeln!(w);
+        }
     }
 }
 
